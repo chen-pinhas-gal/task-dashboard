@@ -1,0 +1,1999 @@
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דשבורד משימות פרוייקט</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #111827 0%, #374151 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.9);
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .boards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .add-board-btn {
+            background: linear-gradient(135deg, #111827 0%, #374151 100%);
+            border: 3px dashed rgba(217,119,6,0.6);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #d97706;
+            min-height: 200px;
+            text-align: center;
+        }
+
+        .add-board-btn:hover {
+            transform: translateY(-5px);
+            border-color: rgba(217,119,6,0.9);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%);
+        }
+
+        .add-board-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .add-board-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .new-board-form {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #667eea;
+        }
+
+        .new-board-form h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 10px rgba(102,126,234,0.2);
+        }
+
+        .emoji-picker {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .emoji-option {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .emoji-option:hover, .emoji-option.selected {
+            border-color: #667eea;
+            background: rgba(102,126,234,0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover, .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .board-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .board-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .board-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid;
+        }
+
+        .board-icon {
+            font-size: 2rem;
+            margin-left: 15px;
+        }
+
+        .board-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            position: relative;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .board-title:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .board-title::after {
+            content: '📥';
+            position: absolute;
+            left: -30px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .board-card.drag-over .board-title::after {
+            opacity: 1;
+        }
+
+        .board-title-input {
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 5px;
+            background: white;
+            color: #333;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .board-title-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(102,126,234,0.3);
+        }
+
+        .edit-board-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            opacity: 0;
+            margin-right: 10px;
+        }
+
+        .board-header:hover .edit-board-btn {
+            opacity: 1;
+        }
+
+        .edit-board-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        .delete-board-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            opacity: 0;
+            margin-right: 5px;
+        }
+
+        .board-header:hover .delete-board-btn {
+            opacity: 1;
+        }
+
+        .delete-board-btn:hover {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            transform: scale(1.1);
+        }
+
+        .delete-confirmation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .confirmation-dialog {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .confirmation-dialog h3 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .confirmation-dialog p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .confirmation-dialog .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .task-count {
+            margin-right: auto;
+            background: rgba(0,0,0,0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .add-task-btn {
+            background: rgba(0,0,0,0.1);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .add-task-btn:hover {
+            background: rgba(0,0,0,0.2);
+            transform: scale(1.1);
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f8f9ff;
+            border-right: 4px solid;
+            transition: all 0.3s ease;
+            cursor: grab;
+            position: relative;
+        }
+
+        .task-item:hover {
+            background: #f0f2ff;
+            transform: translateX(-5px);
+        }
+
+        .task-item.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+            cursor: grabbing;
+            z-index: 1000;
+        }
+
+        .task-item .drag-handle {
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ccc;
+            font-size: 1.2rem;
+            cursor: grab;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .task-item:hover .drag-handle {
+            opacity: 1;
+        }
+
+        .tasks-list.drag-over {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+        }
+
+        .drop-indicator {
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+            margin: 5px 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .drop-indicator.show {
+            opacity: 1;
+        }
+
+        .task-checkbox {
+            margin-left: 12px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            position: relative;
+        }
+
+        .task-title-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .task-header-icons {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .task-icon-btn {
+            background: none;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 3px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+            color: #666;
+        }
+
+        .task-icon-btn:hover {
+            opacity: 1;
+            background: rgba(0,0,0,0.1);
+            transform: scale(1.1);
+        }
+
+        .task-icon-btn.priority-btn:hover {
+            color: #667eea;
+        }
+
+        .task-icon-btn.delete-btn:hover {
+            color: #e74c3c;
+        }
+
+        .priority-badge {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .priority-high {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        .priority-medium {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+        }
+
+        .priority-low {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+
+        .priority-selector {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+        }
+
+        .priority-selector.show {
+            display: block;
+        }
+
+        .priority-selector label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .priority-options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .priority-option {
+            padding: 6px 12px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .priority-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .priority-option.selected {
+            border-color: currentColor;
+            color: white;
+        }
+
+        .priority-option.high {
+            color: #e74c3c;
+        }
+
+        .priority-option.high.selected {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            border-color: #e74c3c;
+        }
+
+        .priority-option.medium {
+            color: #f39c12;
+        }
+
+        .priority-option.medium.selected {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            border-color: #f39c12;
+        }
+
+        .priority-option.low {
+            color: #27ae60;
+        }
+
+        .priority-option.low.selected {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            border-color: #27ae60;
+        }
+
+        .priority-option.none {
+            color: #6c757d;
+        }
+
+        .priority-option.none.selected {
+            background: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .set-priority-btn {
+            background: none;
+            border: 1px dashed #ddd;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .set-priority-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }.task-description {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .task-note {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #856404;
+        }
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #856404;
+        }
+
+        .add-note-btn, .delete-task-btn {
+            background: none;
+            border: 1px dashed #ddd;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-note-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .delete-task-btn {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .delete-task-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+            background: none;
+            border: 1px dashed #ddd;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-note-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .delete-task-btn {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .delete-task-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .note-input, .task-input, .task-desc-input {
+            width: 100%;
+            margin-top: 8px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            resize: vertical;
+        }
+
+        .note-input {
+            min-height: 60px;
+        }
+
+        .task-desc-input {
+            min-height: 50px;
+        }
+
+        .note-actions, .task-form-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .new-task-form {
+            background: #f0f8ff;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .new-task-form h4 {
+            margin-bottom: 10px;
+            color: #667eea;
+            font-size: 1rem;
+        }
+
+        /* Board specific colors - ניתן להתאמה לפי הפרויקט */
+        .board-1 { border-bottom-color: #e74c3c; }
+        .board-1 .board-header { border-bottom-color: #e74c3c; }
+        .board-1 .board-icon { color: #e74c3c; }
+        .board-1 .task-item { border-right-color: #e74c3c; }
+
+        .board-2 { border-bottom-color: #f39c12; }
+        .board-2 .board-header { border-bottom-color: #f39c12; }
+        .board-2 .board-icon { color: #f39c12; }
+        .board-2 .task-item { border-right-color: #f39c12; }
+
+        .board-3 { border-bottom-color: #2ecc71; }
+        .board-3 .board-header { border-bottom-color: #2ecc71; }
+        .board-3 .board-icon { color: #2ecc71; }
+        .board-3 .task-item { border-right-color: #2ecc71; }
+
+        .board-4 { border-bottom-color: #9b59b6; }
+        .board-4 .board-header { border-bottom-color: #9b59b6; }
+        .board-4 .board-icon { color: #9b59b6; }
+        .board-4 .task-item { border-right-color: #9b59b6; }
+
+        .board-5 { border-bottom-color: #34495e; }
+        .board-5 .board-header { border-bottom-color: #34495e; }
+        .board-5 .board-icon { color: #34495e; }
+        .board-5 .task-item { border-right-color: #34495e; }
+
+        .board-6 { border-bottom-color: #3498db; }
+        .board-6 .board-header { border-bottom-color: #3498db; }
+        .board-6 .board-icon { color: #3498db; }
+        .board-6 .task-item { border-right-color: #3498db; }
+
+        .board-7 { border-bottom-color: #e67e22; }
+        .board-7 .board-header { border-bottom-color: #e67e22; }
+        .board-7 .board-icon { color: #e67e22; }
+        .board-7 .task-item { border-right-color: #e67e22; }
+
+        .board-8 { border-bottom-color: #16a085; }
+        .board-8 .board-header { border-bottom-color: #16a085; }
+        .board-8 .board-icon { color: #16a085; }
+        .board-8 .task-item { border-right-color: #16a085; }
+
+        .board-9 { border-bottom-color: #8e44ad; }
+        .board-9 .board-header { border-bottom-color: #8e44ad; }
+        .board-9 .board-icon { color: #8e44ad; }
+        .board-9 .task-item { border-right-color: #8e44ad; }
+
+        .board-10 { border-bottom-color: #d35400; }
+        .board-10 .board-header { border-bottom-color: #d35400; }
+        .board-10 .board-icon { color: #d35400; }
+        .board-10 .task-item { border-right-color: #d35400; }
+
+        .completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        @media (max-width: 768px) {
+            .boards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 דשבורד משימות פרוייקט</h1>
+        <p>מערכת ניהול משימות - גרור ושחרר להעברת משימות</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="totalTasks">0</div>
+            <div class="stat-label">סה"כ משימות</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="completedTasks">0</div>
+            <div class="stat-label">הושלמו</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="progressPercent">0%</div>
+            <div class="stat-label">אחוז התקדמות</div>
+        </div>
+    </div>
+
+    <div class="boards-container">
+        <!-- בורד לדוגמה 1 -->
+        <div class="board-card board-1">
+            <div class="board-header">
+                <div class="board-icon">📋</div>
+                <div class="board-title" ondblclick="editBoardTitle(this)" data-original="קטגוריה 1">קטגוריה 1</div>
+                <button class="delete-board-btn" onclick="confirmDeleteBoard(this)" title="מחק קטגוריה">🗑️</button>
+                <button class="edit-board-btn" onclick="editBoardTitle(this.previousElementSibling.previousElementSibling)" title="ערוך שם קטגוריה">✏️</button>
+                <button class="add-task-btn" onclick="showAddTaskForm('board1')">+</button>
+                <div class="task-count">0 משימות</div>
+            </div>
+            <div class="tasks-list" data-board="board1">
+                <!-- משימות יתווספו כאן -->
+            </div>
+        </div>
+
+        <!-- בורד לדוגמה 2 -->
+        <div class="board-card board-2">
+            <div class="board-header">
+                <div class="board-icon">📊</div>
+                <div class="board-title" ondblclick="editBoardTitle(this)" data-original="קטגוריה 2">קטגוריה 2</div>
+                <button class="delete-board-btn" onclick="confirmDeleteBoard(this)" title="מחק קטגוריה">🗑️</button>
+                <button class="edit-board-btn" onclick="editBoardTitle(this.previousElementSibling.previousElementSibling)" title="ערוך שם קטגוריה">✏️</button>
+                <button class="add-task-btn" onclick="showAddTaskForm('board2')">+</button>
+                <div class="task-count">0 משימות</div>
+            </div>
+            <div class="tasks-list" data-board="board2">
+                <!-- משימות יתווספו כאן -->
+            </div>
+        </div>
+
+        <!-- בורד לדוגמה 3 -->
+        <div class="board-card board-3">
+            <div class="board-header">
+                <div class="board-icon">⚙️</div>
+                <div class="board-title" ondblclick="editBoardTitle(this)" data-original="קטגוריה 3">קטגוריה 3</div>
+                <button class="delete-board-btn" onclick="confirmDeleteBoard(this)" title="מחק קטגוריה">🗑️</button>
+                <button class="edit-board-btn" onclick="editBoardTitle(this.previousElementSibling.previousElementSibling)" title="ערוך שם קטגוריה">✏️</button>
+                <button class="add-task-btn" onclick="showAddTaskForm('board3')">+</button>
+                <div class="task-count">0 משימות</div>
+            </div>
+            <div class="tasks-list" data-board="board3">
+                <!-- משימות יתווספו כאן -->
+            </div>
+        </div>
+
+        <!-- ניתן להוסיף עוד בורדים לפי הצורך -->
+        
+        <!-- כפתור הוספת קטגוריה -->
+        <div class="add-board-btn" onclick="showAddBoardForm()">
+            <div class="add-board-icon">➕</div>
+            <div class="add-board-text">הוסף קטגוריה חדשה</div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let taskNotes = {};
+        let taskStates = {};
+        let taskCounter = 0;
+        let boardTitles = {}; // Store custom board titles
+        let boardCounter = 3; // Start from 4 since we have 3 default boards
+        let boardIcons = {}; // Store custom board icons
+        let taskPriorities = {}; // Store task priorities
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            initializeEventListeners();
+            updateStats();
+            updateTaskCounts();
+        });
+
+        function initializeEventListeners() {
+            // Checkbox change handlers
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleTaskToggle);
+            });
+
+            // Add note button handlers
+            document.querySelectorAll('.add-note-btn').forEach(btn => {
+                btn.addEventListener('click', handleAddNote);
+            });
+
+            // Delete task button handlers
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', handleDeleteTask);
+            });
+
+            // Priority button handlers
+            document.querySelectorAll('.priority-btn').forEach(btn => {
+                btn.addEventListener('click', handleSetPriority);
+            });
+
+            // Initialize drag and drop for existing tasks
+            document.querySelectorAll('.task-item').forEach(task => {
+                task.draggable = true;
+                task.addEventListener('dragstart', handleDragStart);
+                task.addEventListener('dragend', handleDragEnd);
+                
+                // Re-attach event listeners for existing tasks
+                const deleteBtn = task.querySelector('.delete-btn');
+                if (deleteBtn) {
+                    // Remove existing listeners to avoid duplicates
+                    deleteBtn.removeEventListener('click', handleDeleteTask);
+                    deleteBtn.addEventListener('click', handleDeleteTask);
+                }
+                
+                const priorityBtn = task.querySelector('.priority-btn');
+                if (priorityBtn) {
+                    priorityBtn.removeEventListener('click', handleSetPriority);
+                    priorityBtn.addEventListener('click', handleSetPriority);
+                }
+            });
+
+            // Initialize drop zones
+            document.querySelectorAll('.tasks-list').forEach(list => {
+                list.addEventListener('dragover', handleDragOver);
+                list.addEventListener('drop', handleDrop);
+                list.addEventListener('dragenter', handleDragEnter);
+                list.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function showAddTaskForm(boardName) {
+            const tasksList = document.querySelector(`[data-board="${boardName}"]`);
+            
+            // Remove existing form if any
+            const existingForm = tasksList.querySelector('.new-task-form');
+            if (existingForm) {
+                existingForm.remove();
+                return;
+            }
+
+            // Create new task form
+            const formDiv = document.createElement('div');
+            formDiv.className = 'new-task-form';
+            formDiv.innerHTML = `
+                <h4>➕ הוספת משימה חדשה</h4>
+                <input type="text" class="task-input" placeholder="כותרת המשימה..." maxlength="100">
+                <textarea class="task-desc-input" placeholder="תיאור המשימה..." maxlength="200"></textarea>
+                <div class="task-form-actions">
+                    <button class="btn btn-save" onclick="saveNewTask('${boardName}')">שמור משימה</button>
+                    <button class="btn btn-cancel" onclick="cancelAddTask('${boardName}')">ביטול</button>
+                </div>
+            `;
+
+            tasksList.insertBefore(formDiv, tasksList.firstChild);
+            
+            // Focus on title input
+            const titleInput = formDiv.querySelector('.task-input');
+            titleInput.focus();
+
+            // Handle Enter key to save
+            titleInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    saveNewTask(boardName);
+                }
+            });
+        }
+
+        function saveNewTask(boardName) {
+            const tasksList = document.querySelector(`[data-board="${boardName}"]`);
+            const form = tasksList.querySelector('.new-task-form');
+            
+            const title = form.querySelector('.task-input').value.trim();
+            const description = form.querySelector('.task-desc-input').value.trim();
+
+            if (!title) {
+                alert('נא להזין כותרת למשימה');
+                return;
+            }
+
+            // Generate new task ID
+            taskCounter++;
+            const newTaskId = taskCounter.toString();
+
+            // Create new task element
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task-item';
+            taskDiv.setAttribute('data-task', newTaskId);
+            taskDiv.innerHTML = `
+                <div class="drag-handle">⋮⋮</div>
+                <input type="checkbox" class="task-checkbox">
+                <div class="task-content">
+                    <div class="task-title">
+                        <div class="task-title-content">${title}</div>
+                        <div class="task-header-icons">
+                            <button class="task-icon-btn priority-btn" title="קבע דחיפות">📌</button>
+                            <button class="task-icon-btn delete-btn" title="מחק משימה">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="task-description">${description}</div>
+                    <div class="task-actions">
+                        <button class="add-note-btn">+ הוסף הערה</button>
+                    </div>
+                </div>
+            `;
+
+            // Make task draggable
+            taskDiv.draggable = true;
+
+            // Add event listeners to new task
+            const checkbox = taskDiv.querySelector('.task-checkbox');
+            checkbox.addEventListener('change', handleTaskToggle);
+
+            const addNoteBtn = taskDiv.querySelector('.add-note-btn');
+            addNoteBtn.addEventListener('click', handleAddNote);
+
+            const deleteBtn = taskDiv.querySelector('.delete-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', handleDeleteTask);
+            }
+
+            const priorityBtn = taskDiv.querySelector('.priority-btn');
+            if (priorityBtn) {
+                priorityBtn.addEventListener('click', handleSetPriority);
+            }
+
+            // Add drag and drop event listeners
+            taskDiv.addEventListener('dragstart', handleDragStart);
+            taskDiv.addEventListener('dragend', handleDragEnd);
+
+            // Insert after form
+            tasksList.insertBefore(taskDiv, form.nextSibling);
+
+            // Remove form
+            form.remove();
+
+            // Update counters and save data
+            updateStats();
+            updateTaskCounts();
+            saveData();
+
+            // Show success animation
+            taskDiv.style.backgroundColor = '#d4edda';
+            setTimeout(() => {
+                taskDiv.style.backgroundColor = '';
+            }, 2000);
+        }
+
+        function cancelAddTask(boardName) {
+            const tasksList = document.querySelector(`[data-board="${boardName}"]`);
+            const form = tasksList.querySelector('.new-task-form');
+            if (form) {
+                form.remove();
+            }
+        }
+
+        function handleTaskToggle(event) {
+            const taskItem = event.target.closest('.task-item');
+            const taskId = taskItem.dataset.task;
+            const isCompleted = event.target.checked;
+
+            taskStates[taskId] = isCompleted;
+
+            if (isCompleted) {
+                taskItem.classList.add('completed');
+            } else {
+                taskItem.classList.remove('completed');
+            }
+
+            saveData();
+            updateStats();
+        }
+
+        function handleAddNote(event) {
+            event.preventDefault();
+            const button = event.target;
+            const taskContent = button.closest('.task-content');
+            const taskItem = button.closest('.task-item');
+            const taskId = taskItem.dataset.task;
+            const actionsDiv = button.closest('.task-actions');
+
+            // Hide the actions div
+            actionsDiv.style.display = 'none';
+
+            // Create note input
+            const noteInput = document.createElement('textarea');
+            noteInput.className = 'note-input';
+            noteInput.placeholder = 'הוסף הערה למשימה...';
+            noteInput.value = taskNotes[taskId] || '';
+
+            // Create action buttons
+            const noteActions = document.createElement('div');
+            noteActions.className = 'note-actions';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'btn btn-save';
+            saveBtn.textContent = 'שמור';
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn btn-cancel';
+            cancelBtn.textContent = 'ביטול';
+
+            noteActions.appendChild(saveBtn);
+            noteActions.appendChild(cancelBtn);
+
+            taskContent.appendChild(noteInput);
+            taskContent.appendChild(noteActions);
+
+            noteInput.focus();
+
+            // Save button handler
+            saveBtn.addEventListener('click', function() {
+                const noteText = noteInput.value.trim();
+                
+                if (noteText) {
+                    taskNotes[taskId] = noteText;
+                    showNote(taskContent, noteText, taskId);
+                    saveData();
+                } else {
+                    // Show actions div again if no text
+                    actionsDiv.style.display = 'flex';
+                }
+
+                noteInput.remove();
+                noteActions.remove();
+            });
+
+            // Cancel button handler
+            cancelBtn.addEventListener('click', function() {
+                noteInput.remove();
+                noteActions.remove();
+                
+                // Show existing note or actions div
+                if (taskNotes[taskId]) {
+                    showNote(taskContent, taskNotes[taskId], taskId);
+                } else {
+                    actionsDiv.style.display = 'flex';
+                }
+            });
+        }
+
+        function handleDeleteTask(event) {
+            const taskItem = event.target.closest('.task-item');
+            const taskId = taskItem.dataset.task;
+            
+            // Remove from data
+            delete taskStates[taskId];
+            delete taskNotes[taskId];
+            delete taskPriorities[taskId];
+            
+            // Remove from DOM
+            taskItem.remove();
+            
+            // Update counters
+            updateStats();
+            updateTaskCounts();
+            saveData();
+        }
+
+        function showNote(taskContent, noteText, taskId) {
+            // Remove existing note if any
+            const existingNote = taskContent.querySelector('.task-note');
+            if (existingNote) {
+                existingNote.remove();
+            }
+
+            // Hide actions div
+            const actionsDiv = taskContent.querySelector('.task-actions');
+            if (actionsDiv) {
+                actionsDiv.style.display = 'none';
+            }
+
+            // Create note display
+            const noteDiv = document.createElement('div');
+            noteDiv.className = 'task-note';
+            noteDiv.innerHTML = `
+                <strong>הערה:</strong> ${noteText}
+                <button class="btn" style="float: left; padding: 2px 8px; font-size: 0.7rem; margin-top: 5px;" onclick="editNote(this, '${taskId}')">ערוך</button>
+            `;
+
+            taskContent.appendChild(noteDiv);
+        }
+
+        function editNote(button, taskId) {
+            const taskContent = button.closest('.task-content');
+            const noteDiv = button.closest('.task-note');
+            const addNoteBtn = taskContent.querySelector('.add-note-btn');
+            
+            noteDiv.remove();
+            
+            // Trigger add note functionality
+            addNoteBtn.click();
+        }
+
+        // Priority functionality
+        function handleSetPriority(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const button = event.target;
+            const taskContent = button.closest('.task-content');
+            const taskItem = button.closest('.task-item');
+            const taskId = taskItem.dataset.task;
+
+            // Check if priority selector already exists
+            let prioritySelector = taskContent.querySelector('.priority-selector');
+            
+            if (prioritySelector) {
+                // Toggle visibility
+                prioritySelector.classList.toggle('show');
+                return;
+            }
+
+            // Create priority selector
+            prioritySelector = document.createElement('div');
+            prioritySelector.className = 'priority-selector show';
+            
+            const currentPriority = taskPriorities[taskId] || '';
+            
+            prioritySelector.innerHTML = `
+                <label>בחר רמת דחיפות:</label>
+                <div class="priority-options">
+                    <div class="priority-option high ${currentPriority === 'high' ? 'selected' : ''}" data-priority="high">🔴 גבוהה</div>
+                    <div class="priority-option medium ${currentPriority === 'medium' ? 'selected' : ''}" data-priority="medium">🟡 בינונית</div>
+                    <div class="priority-option low ${currentPriority === 'low' ? 'selected' : ''}" data-priority="low">🟢 נמוכה</div>
+                    <div class="priority-option none ${currentPriority === '' ? 'selected' : ''}" data-priority="">❌ ללא</div>
+                </div>
+            `;
+
+            taskContent.appendChild(prioritySelector);
+
+            // Add click handlers for priority options
+            prioritySelector.querySelectorAll('.priority-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const priority = this.dataset.priority;
+                    
+                    // Update selection
+                    prioritySelector.querySelectorAll('.priority-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // Save priority
+                    if (priority === '') {
+                        delete taskPriorities[taskId];
+                    } else {
+                        taskPriorities[taskId] = priority;
+                    }
+                    
+                    // Update task display
+                    updateTaskPriorityDisplay(taskItem, priority);
+                    
+                    // Save data
+                    saveData();
+                    
+                    // Hide selector after selection
+                    setTimeout(() => {
+                        prioritySelector.classList.remove('show');
+                    }, 500);
+                });
+            });
+
+            // Click outside to close
+            setTimeout(() => {
+                function closeSelector(e) {
+                    if (!prioritySelector.contains(e.target) && !button.contains(e.target)) {
+                        prioritySelector.classList.remove('show');
+                        document.removeEventListener('click', closeSelector);
+                    }
+                }
+                document.addEventListener('click', closeSelector);
+            }, 100);
+        }
+
+        function updateTaskPriorityDisplay(taskItem, priority) {
+            const taskTitleContent = taskItem.querySelector('.task-title-content');
+            
+            // Remove existing priority badge
+            const existingBadge = taskTitleContent.querySelector('.priority-badge');
+            if (existingBadge) {
+                existingBadge.remove();
+            }
+            
+            // Add new priority badge if priority is set
+            if (priority && priority !== '') {
+                const badge = document.createElement('span');
+                badge.className = `priority-badge priority-${priority}`;
+                
+                const priorityTexts = {
+                    'high': '🔴 גבוהה',
+                    'medium': '🟡 בינונית', 
+                    'low': '🟢 נמוכה'
+                };
+                
+                badge.textContent = priorityTexts[priority];
+                taskTitleContent.appendChild(badge);
+            }
+        }
+
+        function updateStats() {
+            const totalTasks = document.querySelectorAll('.task-checkbox').length;
+            const completedTasks = Object.values(taskStates).filter(state => state).length;
+            const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+            document.getElementById('totalTasks').textContent = totalTasks;
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('progressPercent').textContent = progressPercent + '%';
+        }
+
+        function updateTaskCounts() {
+            // Update task count for each board
+            document.querySelectorAll('[data-board]').forEach(tasksList => {
+                const taskCount = tasksList.querySelectorAll('.task-item').length;
+                const boardCard = tasksList.closest('.board-card');
+                const countElement = boardCard.querySelector('.task-count');
+                
+                countElement.textContent = `${taskCount} משימות`;
+            });
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            const data = {
+                taskStates: taskStates,
+                taskNotes: taskNotes,
+                taskCounter: taskCounter,
+                boardTitles: boardTitles,
+                boardCounter: boardCounter,
+                boardIcons: boardIcons,
+                taskPriorities: taskPriorities
+            };
+
+            try {
+                localStorage.setItem('projectTaskData', JSON.stringify(data));
+                console.log('Data saved to localStorage');
+            } catch (error) {
+                console.error('Error saving to localStorage:', error);
+                // Fallback to memory storage
+                window.projectData = data;
+            }
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            try {
+                const savedData = localStorage.getItem('projectTaskData');
+                
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    taskStates = data.taskStates || {};
+                    taskNotes = data.taskNotes || {};
+                    taskCounter = data.taskCounter || 0;
+                    boardTitles = data.boardTitles || {};
+                    boardCounter = data.boardCounter || 3;
+                    boardIcons = data.boardIcons || {};
+                    taskPriorities = data.taskPriorities || {};
+                    
+                    console.log('Data loaded from localStorage');
+                } else {
+                    console.log('No saved data found in localStorage');
+                }
+            } catch (error) {
+                console.error('Error loading from localStorage:', error);
+                // Try fallback from memory
+                if (window.projectData) {
+                    const data = window.projectData;
+                    taskStates = data.taskStates || {};
+                    taskNotes = data.taskNotes || {};
+                    taskCounter = data.taskCounter || 0;
+                    boardTitles = data.boardTitles || {};
+                    boardCounter = data.boardCounter || 3;
+                    boardIcons = data.boardIcons || {};
+                    taskPriorities = data.taskPriorities || {};
+                }
+            }
+            
+            // Apply all loaded data to the interface
+            applyLoadedData();
+        }
+
+        // Apply loaded data to the interface
+        function applyLoadedData() {
+            // Apply saved board titles and icons
+            Object.keys(boardTitles).forEach(boardId => {
+                const titleElement = document.querySelector(`[data-board="${boardId}"]`)?.closest('.board-card')?.querySelector('.board-title');
+                if (titleElement) {
+                    titleElement.textContent = boardTitles[boardId];
+                }
+            });
+
+            Object.keys(boardIcons).forEach(boardId => {
+                const iconElement = document.querySelector(`[data-board="${boardId}"]`)?.closest('.board-card')?.querySelector('.board-icon');
+                if (iconElement) {
+                    iconElement.textContent = boardIcons[boardId];
+                }
+            });
+            
+            // Apply saved states to checkboxes
+            Object.keys(taskStates).forEach(taskId => {
+                const checkbox = document.querySelector(`[data-task="${taskId}"] .task-checkbox`);
+                const taskItem = document.querySelector(`[data-task="${taskId}"]`);
+                if (checkbox && taskStates[taskId]) {
+                    checkbox.checked = true;
+                    taskItem.classList.add('completed');
+                }
+            });
+
+            // Apply saved notes
+            Object.keys(taskNotes).forEach(taskId => {
+                const taskContent = document.querySelector(`[data-task="${taskId}"] .task-content`);
+                if (taskContent && taskNotes[taskId]) {
+                    showNote(taskContent, taskNotes[taskId], taskId);
+                }
+            });
+
+            // Apply saved priorities
+            Object.keys(taskPriorities).forEach(taskId => {
+                const taskItem = document.querySelector(`[data-task="${taskId}"]`);
+                if (taskItem) {
+                    updateTaskPriorityDisplay(taskItem, taskPriorities[taskId]);
+                }
+            });
+        }
+
+        // Global functions
+        window.showAddTaskForm = showAddTaskForm;
+        window.saveNewTask = saveNewTask;
+        window.cancelAddTask = cancelAddTask;
+        window.editNote = editNote;
+        window.editBoardTitle = editBoardTitle;
+        window.showAddBoardForm = showAddBoardForm;
+        window.createNewBoard = createNewBoard;
+        window.cancelAddBoard = cancelAddBoard;
+        window.confirmDeleteBoard = confirmDeleteBoard;
+        window.deleteBoard = deleteBoard;
+        window.cancelDeleteBoard = cancelDeleteBoard;
+        window.handleSetPriority = handleSetPriority;
+
+        // Drag and Drop functionality
+        let draggedElement = null;
+        let draggedFromBoard = null;
+
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            draggedFromBoard = e.target.closest('[data-board]').dataset.board;
+            e.target.classList.add('dragging');
+            
+            // Set drag effect
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.outerHTML);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            
+            // Remove all drop indicators
+            document.querySelectorAll('.drop-indicator').forEach(indicator => {
+                indicator.remove();
+            });
+            
+            // Remove drag-over class from all lists
+            document.querySelectorAll('.tasks-list').forEach(list => {
+                list.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const tasksList = e.currentTarget;
+            const afterElement = getDragAfterElement(tasksList, e.clientY);
+            
+            // Remove existing drop indicators in this list
+            tasksList.querySelectorAll('.drop-indicator').forEach(indicator => {
+                indicator.remove();
+            });
+            
+            // Create and position drop indicator
+            const dropIndicator = document.createElement('div');
+            dropIndicator.className = 'drop-indicator show';
+            
+            if (afterElement == null) {
+                tasksList.appendChild(dropIndicator);
+            } else {
+                tasksList.insertBefore(dropIndicator, afterElement);
+            }
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            // Only remove drag-over if we're actually leaving the list
+            if (!e.currentTarget.contains(e.relatedTarget)) {
+                e.currentTarget.classList.remove('drag-over');
+                // Remove drop indicators when leaving
+                e.currentTarget.querySelectorAll('.drop-indicator').forEach(indicator => {
+                    indicator.remove();
+                });
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            const tasksList = e.currentTarget;
+            const targetBoard = tasksList.dataset.board;
+            
+            if (draggedElement) {
+                // Remove the dragged element from its original position
+                const originalParent = draggedElement.parentNode;
+                draggedElement.remove();
+                
+                // Find the drop position
+                const afterElement = getDragAfterElement(tasksList, e.clientY);
+                
+                // Insert the element at the new position
+                if (afterElement == null) {
+                    tasksList.appendChild(draggedElement);
+                } else {
+                    tasksList.insertBefore(draggedElement, afterElement);
+                }
+                
+                // Update the task's board association if moved between boards
+                if (draggedFromBoard !== targetBoard) {
+                    console.log(`Moved task from ${draggedFromBoard} to ${targetBoard}`);
+                    
+                    // Update task styling to match new board
+                    updateTaskStyling(draggedElement, targetBoard);
+                }
+                
+                // Update counters
+                updateTaskCounts();
+                saveData();
+                
+                // Show success feedback
+                draggedElement.style.backgroundColor = '#d4edda';
+                setTimeout(() => {
+                    draggedElement.style.backgroundColor = '';
+                }, 1000);
+            }
+            
+            // Clean up
+            tasksList.classList.remove('drag-over');
+            tasksList.querySelectorAll('.drop-indicator').forEach(indicator => {
+                indicator.remove();
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.task-item:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function updateTaskStyling(taskElement, boardName) {
+            // Remove old board-specific classes
+            taskElement.classList.remove('board-1', 'board-2', 'board-3', 'board-4', 'board-5', 'board-6');
+            
+            // Add new board styling based on board name
+            const boardMap = {
+                'board1': 'board-1',
+                'board2': 'board-2', 
+                'board3': 'board-3',
+                'board4': 'board-4',
+                'board5': 'board-5',
+                'board6': 'board-6'
+            };
+            
+            if (boardMap[boardName]) {
+                // We'll apply the styling through CSS inheritance from parent
+                // The task item styling is inherited from the board-card class
+            }
+        }
+
+        // Board title editing functionality
+        function editBoardTitle(titleElement) {
+            // If already editing, don't start another edit
+            if (titleElement.querySelector('.board-title-input')) {
+                return;
+            }
+
+            const currentTitle = titleElement.textContent;
+            const boardId = titleElement.closest('.board-card').querySelector('[data-board]').dataset.board;
+            
+            // Create input element
+            const input = document.createElement('input');
+            input.className = 'board-title-input';
+            input.value = currentTitle;
+            input.maxLength = 50;
+            
+            // Replace title with input
+            titleElement.innerHTML = '';
+            titleElement.appendChild(input);
+            
+            // Focus and select text
+            input.focus();
+            input.select();
+            
+            // Save function
+            function saveTitle() {
+                const newTitle = input.value.trim();
+                if (newTitle === '') {
+                    // Restore original title if empty
+                    titleElement.textContent = currentTitle;
+                    return;
+                }
+                
+                // Update title
+                titleElement.textContent = newTitle;
+                boardTitles[boardId] = newTitle;
+                saveData();
+                
+                // Add save animation
+                titleElement.style.backgroundColor = 'rgba(40, 167, 69, 0.2)';
+                setTimeout(() => {
+                    titleElement.style.backgroundColor = '';
+                }, 1000);
+            }
+            
+            // Cancel function
+            function cancelEdit() {
+                titleElement.textContent = currentTitle;
+            }
+            
+            // Event listeners
+            input.addEventListener('blur', saveTitle);
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveTitle();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelEdit();
+                }
+            });
+        }
+
+        // Add new board functionality
+        function showAddBoardForm() {
+            // Check if form already exists
+            if (document.querySelector('.new-board-form')) {
+                return;
+            }
+
+            const addBoardBtn = document.querySelector('.add-board-btn');
+            
+            // Create form
+            const formDiv = document.createElement('div');
+            formDiv.className = 'new-board-form';
+            formDiv.innerHTML = `
+                <h3>➕ הוספת קטגוריה חדשה</h3>
+                
+                <div class="form-group">
+                    <label for="board-title">שם הקטגוריה:</label>
+                    <input type="text" id="board-title" placeholder="הכנס שם קטגוריה..." maxlength="30" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>בחר אייקון:</label>
+                    <div class="emoji-picker">
+                        <div class="emoji-option selected" data-emoji="📋">📋</div>
+                        <div class="emoji-option" data-emoji="📊">📊</div>
+                        <div class="emoji-option" data-emoji="⚙️">⚙️</div>
+                        <div class="emoji-option" data-emoji="💼">💼</div>
+                        <div class="emoji-option" data-emoji="👥">👥</div>
+                        <div class="emoji-option" data-emoji="🎯">🎯</div>
+                        <div class="emoji-option" data-emoji="📈">📈</div>
+                        <div class="emoji-option" data-emoji="💡">💡</div>
+                        <div class="emoji-option" data-emoji="🔧">🔧</div>
+                        <div class="emoji-option" data-emoji="📝">📝</div>
+                        <div class="emoji-option" data-emoji="🏆">🏆</div>
+                        <div class="emoji-option" data-emoji="🚀">🚀</div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-primary" onclick="createNewBoard()">יצירת קטגוריה</button>
+                    <button type="button" class="btn-secondary" onclick="cancelAddBoard()">ביטול</button>
+                </div>
+            `;
+
+            // Replace add button with form
+            addBoardBtn.replaceWith(formDiv);
+
+            // Focus on title input
+            document.getElementById('board-title').focus();
+
+            // Add emoji selection functionality
+            document.querySelectorAll('.emoji-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.emoji-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+
+            // Add Enter key functionality
+            document.getElementById('board-title').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    createNewBoard();
+                }
+            });
+        }
+
+        function createNewBoard() {
+            const titleInput = document.getElementById('board-title');
+            const selectedEmoji = document.querySelector('.emoji-option.selected');
+            
+            const title = titleInput.value.trim();
+            const emoji = selectedEmoji.dataset.emoji;
+            
+            if (!title) {
+                alert('נא להזין שם לקטגוריה');
+                titleInput.focus();
+                return;
+            }
+
+            boardCounter++;
+            const boardId = `board${boardCounter}`;
+            const boardClass = `board-${Math.min(boardCounter, 10)}`; // Limit to 10 color schemes
+            
+            // Create new board element
+            const boardDiv = document.createElement('div');
+            boardDiv.className = `board-card ${boardClass}`;
+            boardDiv.innerHTML = `
+                <div class="board-header">
+                    <div class="board-icon">${emoji}</div>
+                    <div class="board-title" ondblclick="editBoardTitle(this)" data-original="${title}">${title}</div>
+                    <button class="delete-board-btn" onclick="confirmDeleteBoard(this)" title="מחק קטגוריה">🗑️</button>
+                    <button class="edit-board-btn" onclick="editBoardTitle(this.previousElementSibling.previousElementSibling)" title="ערוך שם קטגוריה">✏️</button>
+                    <button class="add-task-btn" onclick="showAddTaskForm('${boardId}')">+</button>
+                    <div class="task-count">0 משימות</div>
+                </div>
+                <div class="tasks-list" data-board="${boardId}">
+                    <!-- משימות יתווספו כאן -->
+                </div>
+            `;
+
+            // Insert before the form
+            const form = document.querySelector('.new-board-form');
+            form.parentNode.insertBefore(boardDiv, form);
+
+            // Store board data
+            boardTitles[boardId] = title;
+            boardIcons[boardId] = emoji;
+
+            // Initialize drag and drop for the new board
+            const tasksList = boardDiv.querySelector('.tasks-list');
+            tasksList.addEventListener('dragover', handleDragOver);
+            tasksList.addEventListener('drop', handleDrop);
+            tasksList.addEventListener('dragenter', handleDragEnter);
+            tasksList.addEventListener('dragleave', handleDragLeave);
+
+            // Replace form with add button
+            cancelAddBoard();
+
+            // Update stats and save
+            updateTaskCounts();
+            saveData();
+
+            // Show success animation
+            boardDiv.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+            setTimeout(() => {
+                boardDiv.style.backgroundColor = '';
+            }, 2000);
+        }
+
+        function cancelAddBoard() {
+            const form = document.querySelector('.new-board-form');
+            if (form) {
+                // Create new add button
+                const addBoardBtn = document.createElement('div');
+                addBoardBtn.className = 'add-board-btn';
+                addBoardBtn.onclick = showAddBoardForm;
+                addBoardBtn.innerHTML = `
+                    <div class="add-board-icon">➕</div>
+                    <div class="add-board-text">הוסף קטגוריה חדשה</div>
+                `;
+                
+                form.replaceWith(addBoardBtn);
+            }
+        }
+
+        // Delete board functionality
+        function confirmDeleteBoard(deleteBtn) {
+            const boardCard = deleteBtn.closest('.board-card');
+            const boardTitle = boardCard.querySelector('.board-title').textContent;
+            const tasksList = boardCard.querySelector('.tasks-list');
+            const taskCount = tasksList.querySelectorAll('.task-item').length;
+            const boardId = tasksList.dataset.board;
+
+            // Create confirmation dialog
+            const overlay = document.createElement('div');
+            overlay.className = 'delete-confirmation';
+            
+            let warningMessage = '';
+            if (taskCount > 0) {
+                warningMessage = `
+                    <div class="warning">
+                        ⚠️ <strong>אזהרה:</strong> בקטגוריה זו יש ${taskCount} משימות. 
+                        מחיקת הקטגוריה תמחק גם את כל המשימות!
+                    </div>
+                `;
+            }
+
+            overlay.innerHTML = `
+                <div class="confirmation-dialog">
+                    <h3>🗑️ מחיקת קטגוריה</h3>
+                    <p>האם אתה בטוח שברצונך למחוק את הקטגוריה <strong>"${boardTitle}"</strong>?</p>
+                    ${warningMessage}
+                    <div class="confirmation-actions">
+                        <button class="btn-danger" onclick="deleteBoard('${boardId}')">כן, מחק קטגוריה</button>
+                        <button class="btn-secondary" onclick="cancelDeleteBoard()">ביטול</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+
+            // Add escape key listener
+            function handleEscape(e) {
+                if (e.key === 'Escape') {
+                    cancelDeleteBoard();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            }
+            document.addEventListener('keydown', handleEscape);
+
+            // Click outside to cancel
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    cancelDeleteBoard();
+                }
+            });
+        }
+
+        function deleteBoard(boardId) {
+            const boardCard = document.querySelector(`[data-board="${boardId}"]`).closest('.board-card');
+            const tasksInBoard = boardCard.querySelectorAll('.task-item');
+
+            // Remove all tasks from data
+            tasksInBoard.forEach(task => {
+                const taskId = task.dataset.task;
+                delete taskStates[taskId];
+                delete taskNotes[taskId];
+                delete taskPriorities[taskId];
+            });
+
+            // Remove board data
+            delete boardTitles[boardId];
+            delete boardIcons[boardId];
+
+            // Add deletion animation
+            boardCard.style.transform = 'scale(0.8)';
+            boardCard.style.opacity = '0';
+            
+            setTimeout(() => {
+                boardCard.remove();
+                
+                // Update stats and save
+                updateStats();
+                updateTaskCounts();
+                saveData();
+                
+                // Remove confirmation dialog
+                cancelDeleteBoard();
+            }, 300);
+        }
+
+        function cancelDeleteBoard() {
+            const overlay = document.querySelector('.delete-confirmation');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.remove();
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
